@@ -1,45 +1,26 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Redirect, Tabs } from "expo-router";
+import { useAuth } from "../../context/AuthContext";
+import { useI18n } from "../../context/I18nContext";
+import { useTheme } from "../../context/ThemeContext";
+import React from "react";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function Layout() {
+  const { user } = useAuth(); if (!user) return <Redirect href="../(auth)/login" />;
+  const { colors, isDark } = useTheme(); const { t } = useI18n();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+    <Tabs screenOptions={{
+      headerShown:false,
+      tabBarActiveTintColor: colors.accent,
+      tabBarInactiveTintColor: colors.textMuted,
+      tabBarStyle:{ backgroundColor: colors.card, borderTopColor: colors.border }
+    }}>
+      <Tabs.Screen name="home" options={{ title: t("home"), tabBarIcon: ({color,size}) => <Ionicons name="home" color={color} size={size}/> }} />
+      <Tabs.Screen name="foods/index" options={{ title: t("foods"), tabBarIcon: ({color,size}) => <MaterialCommunityIcons name="food" color={color} size={size}/> }} />
+      <Tabs.Screen name="favourites" options={{ title: t("favourites"), tabBarIcon: ({color,size}) => <Ionicons name="heart" color={color} size={size}/> }} />
+      <Tabs.Screen name="profile" options={{ title: t("profile"), tabBarIcon: ({color,size}) => <Ionicons name="person" color={color} size={size}/> }} />
+      <Tabs.Screen name="settings" options={{ title: t("settings"), tabBarIcon: ({color,size}) => <Ionicons name="settings" color={color} size={size}/> }} />
     </Tabs>
   );
 }

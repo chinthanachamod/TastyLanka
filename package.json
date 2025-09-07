@@ -16,6 +16,7 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
+    "axios": "^1.11.0",
     "expo": "~53.0.22",
     "expo-av": "^15.1.7",
     "expo-blur": "~14.1.5",
@@ -34,6 +35,8 @@
     "expo-web-browser": "~14.2.0",
     "firebase": "^12.2.1",
     "i18next": "^25.5.2",
+    "nativewind": "^4.1.23",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-i18next": "^15.7.3",
@@ -43,10 +46,12 @@
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.11.1",
     "react-native-web": "~0.20.0",
-    "react-native-webview": "13.13.5"
+    "react-native-webview": "13.13.5",
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/axios": "^0.9.36",
     "@types/react": "~19.0.10",
     "@types/react-native": "^0.72.8",
     "eslint": "^9.25.0",
