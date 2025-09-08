@@ -64,7 +64,7 @@ export default function Home() {
             marginBottom: 8,
           }}
         >
-          {t("welcomeMessage")}
+          {t("Welcome to TastyLanka!")}
         </Text>
         <Text
           style={{
