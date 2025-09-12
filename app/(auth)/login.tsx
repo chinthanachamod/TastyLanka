@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  ImageBackground,
   StyleSheet,
   Text,
   TextInput,
@@ -19,20 +20,19 @@ export default function Login() {
   const { t } = useI18n();
   const { colors } = useTheme();
 
-  // State
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [err, setErr] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  // Handle login
   const handleLogin = async () => {
     if (isLoading) return;
     setIsLoading(true);
     setErr("");
     try {
       await signInEmail(email.trim(), password);
-      router.push("/(tabs)/home"); // ✅ Navigate to home after login
+      router.push("/(tabs)/home");
     } catch (e: any) {
       console.error(e);
       setErr(e.message);
@@ -42,102 +42,177 @@ export default function Login() {
     }
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg }]}>
-      {/* Title */}
-      <Text style={[styles.title, { color: colors.text }]}>{t("appName")}</Text>
+    <ImageBackground
+      source={{ uri: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&h=1200&fit=crop" }} // Orange sunset BG
+      style={styles.bgImage}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay} />
 
-      {/* Email */}
-      <TextInput
-        placeholder={t("email")}
-        placeholderTextColor={colors.textMuted}
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.surface,
-            color: colors.text,
-            borderColor: colors.border,
-          },
-        ]}
-      />
+      <View style={styles.container}>
+        {/* Logo */}
+        <View style={styles.logoCircle}>
+          <Ionicons name="shield-checkmark" size={40} color="#fff" />
+        </View>
 
-      {/* Password */}
-      <TextInput
-        placeholder={t("password")}
-        placeholderTextColor={colors.textMuted}
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={[
-          styles.input,
-          {
-            backgroundColor: colors.surface,
-            color: colors.text,
-            borderColor: colors.border,
-          },
-        ]}
-      />
+        {/* Title */}
+        <Text style={styles.title}>{t("appName")}</Text>
 
-      {/* Error Message */}
-      {!!err && <Text style={{ color: "red", marginBottom: 8 }}>{err}</Text>}
+        {/* Email Input */}
+        <TextInput
+          placeholder={t("email")}
+          placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          style={styles.input}
+        />
 
-      {/* Login Button */}
-      <TouchableOpacity
-        onPress={handleLogin}
-        style={[styles.btn, { backgroundColor: colors.accent }]}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.btnText}>{t("login")}</Text>
-        )}
-      </TouchableOpacity>
+        {/* Password Input */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder={t("password")}
+            placeholderTextColor="#999"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            style={styles.passwordInput}
+          />
+          <TouchableOpacity 
+            onPress={toggleShowPassword}
+            style={styles.eyeIcon}
+          >
+            <Ionicons 
+              name={showPassword ? "eye-off" : "eye"} 
+              size={22} 
+              color="#999" 
+            />
+          </TouchableOpacity>
+        </View>
 
-      {/* Register Link */}
-      <Link
-        href="./register"
-        style={{ color: colors.accent, marginTop: 12, textAlign: "center" }}
-      >
-        {t("register")}
-      </Link>
+        {/* Error */}
+        {!!err && <Text style={styles.error}>{err}</Text>}
 
-      <View style={{ height: 24 }} />
+        {/* Login Button */}
+        <TouchableOpacity
+          onPress={handleLogin}
+          style={[
+            styles.loginButton,
+            { backgroundColor: isLoading ? "#ffa64d" : "#FF8000" },
+          ]}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.loginButtonText}>{t("login")}</Text>
+          )}
+        </TouchableOpacity>
 
-      {/* Google Button */}
-      <TouchableOpacity
-        disabled
-        style={[styles.btnOutline, { borderColor: colors.accent }]}
-      >
-        <Ionicons name="logo-google" size={18} color={colors.textMuted} />
-        <Text style={{ color: colors.textMuted }}>{t("google")}</Text>
-      </TouchableOpacity>
-    </View>
+        {/* Register Link */}
+        <Link href="./register" style={styles.registerLink}>
+          {t("register")}
+        </Link>
+
+        <View style={{ height: 24 }} />
+
+        {/* Google Button */}
+        <TouchableOpacity style={styles.googleButton}>
+          <Ionicons name="logo-google" size={18} color="#333" />
+          <Text style={styles.googleButtonText}>{t("google")}</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 }
 
+const ORANGE = "#FF8000";
+
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: { fontSize: 26, fontWeight: "700", marginBottom: 20, textAlign: "center" },
+  bgImage: { flex: 1 },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 20,
+  },
+  logoCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: ORANGE,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 20,
+    elevation: 6,
+    shadowColor: "#000",
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: ORANGE,
+    marginBottom: 20,
+    textAlign: "center",
+  },
   input: {
+    backgroundColor: "rgba(255,255,255,0.95)",
     padding: 14,
     borderRadius: 12,
     borderWidth: 1,
+    borderColor: ORANGE,
+    marginBottom: 12,
+    color: "#333",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: ORANGE,
     marginBottom: 12,
   },
-  btn: { padding: 14, borderRadius: 14, alignItems: "center" },
-  btnText: { color: "#fff", fontWeight: "700" },
-  btnOutline: {
+  passwordInput: {
+    flex: 1,
+    padding: 14,
+    color: "#333",
+  },
+  eyeIcon: {
+    padding: 10,
+  },
+  error: { color: "red", marginBottom: 8, textAlign: "center" },
+  loginButton: {
+    padding: 14,
+    borderRadius: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  loginButtonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  registerLink: {
+    color: ORANGE,
+    marginTop: 12,
+    textAlign: "center",
+    fontWeight: "600",
+  },
+  googleButton: {
     padding: 12,
     borderRadius: 14,
     borderWidth: 1,
+    borderColor: ORANGE,
+    backgroundColor: "#fff",
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
     gap: 8,
   },
+  googleButtonText: { color: "#333", fontWeight: "600" },
 });
-
