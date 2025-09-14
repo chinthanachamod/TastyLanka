@@ -1,34 +1,174 @@
-import React from "react";
-import { View, FlatList, Text } from "react-native";
-import { getMyFavourites } from "@/services/favouritesService";
-import { getFood } from "@/services/foodService";
-import { Food } from "@/types/food";
+// import React from "react";
+// import { View, FlatList, Text } from "react-native";
+// import { getMyFavourites } from "@/services/favouritesService";
+// import { getFood } from "@/services/foodService";
+// import { Food } from "@/types/food";
+// import FoodCard from "@/components/FoodCard";
+// import { useTheme } from "@/context/ThemeContext";
+// import { useI18n } from "@/context/I18nContext";
+// import { useRouter } from "expo-router";
+
+// export default function Favourites() {
+//   const { colors } = useTheme(); const { t } = useI18n(); const router = useRouter();
+//   const [foods,setFoods]=React.useState<Food[]>([]);
+
+//   React.useEffect(()=>{ (async ()=>{
+//     const ids = await getMyFavourites().catch(()=>[]);      // get IDs
+//     const docs = await Promise.all(ids.map(id=>getFood(id)));       // get details
+//     setFoods(docs.filter(Boolean) as Food[]);       // filter out nulls
+//   })(); },[]);
+
+//   return (
+//     <View style={{flex:1, backgroundColor: colors.bg, padding:16}}>
+//       <FlatList
+//         data={foods}
+//         keyExtractor={i=>i.id}
+//         renderItem={({item}) => (
+//           <FoodCard item={item} onPress={()=>router.push(`/(tabs)/foods/${item.id}`)} onHeart={()=>{}} isFav />
+//         )}
+//         ListEmptyComponent={<Text style={{color:colors.textMuted}}>{t("favourites")} empty</Text>}
+//         contentContainerStyle={{gap:12}}
+//       />
+//     </View>
+//   );
+// }
+
+
+
+
+
 import FoodCard from "@/components/FoodCard";
-import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 import { useI18n } from "@/context/I18nContext";
+import { useTheme } from "@/context/ThemeContext";
+import { getMyFavourites, removeFavouriteTxn } from "@/services/favouritesService";
+import { getFoodsByIds } from "@/services/foodService";
+import { Food } from "@/types/food";
 import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function Favourites() {
-  const { colors } = useTheme(); const { t } = useI18n(); const router = useRouter();
-  const [foods,setFoods]=React.useState<Food[]>([]);
+  const { user } = useAuth();
+  const { colors } = useTheme();
+  const { t } = useI18n();
+  const router = useRouter();
 
-  React.useEffect(()=>{ (async ()=>{
-    const ids = await getMyFavourites().catch(()=>[]);      // get IDs
-    const docs = await Promise.all(ids.map(id=>getFood(id)));       // get details
-    setFoods(docs.filter(Boolean) as Food[]);       // filter out nulls
-  })(); },[]);
+  const [foods, setFoods] = useState<Food[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFavourites = async () => {
+      try {
+        setLoading(true);
+        if (!user?.uid) {
+          setFoods([]);
+          return;
+        }
+
+  const favIds = await getMyFavourites().catch(() => []);
+        if (favIds.length > 0) {
+          const favFoods = await getFoodsByIds(favIds);
+          setFoods(favFoods.filter(Boolean) as Food[]);
+        } else {
+          setFoods([]);
+        }
+      } catch (error) {
+        console.error("Error fetching favourites:", error);
+        setFoods([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavourites();
+  }, [user]);
+
+  const handleToggleFavourite = async (foodId: string) => {
+    if (!user?.uid) return;
+    try {
+      // Remove favourite in DB
+  await removeFavouriteTxn(foodId);
+      // Update local state
+      setFoods((prev) => prev.filter((f) => f.id !== foodId));
+    } catch (error) {
+      console.error("Error removing favourite:", error);
+    }
+  };
+
+  const filteredFoods = foods.filter((food) =>
+    food.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) {
+    return (
+      <View style={[styles.center, { backgroundColor: colors.bg }]}>
+  <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
 
   return (
-    <View style={{flex:1, backgroundColor: colors.bg, padding:16}}>
+    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+      {/* Search Bar */}
+      <TextInput
+        placeholder={t("search")}
+        placeholderTextColor={colors.textMuted}
+        value={search}
+        onChangeText={setSearch}
+        style={[
+          styles.searchInput,
+          { backgroundColor: colors.card, color: colors.text, borderColor: colors.border },
+        ]}
+      />
+
+      {/* Favourites List */}
       <FlatList
-        data={foods}
-        keyExtractor={i=>i.id}
-        renderItem={({item}) => (
-          <FoodCard item={item} onPress={()=>router.push(`/(tabs)/foods/${item.id}`)} onHeart={()=>{}} isFav />
+        data={filteredFoods}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <FoodCard
+            item={item}
+            isFav
+            onPress={() => router.push(`/(tabs)/foods/${item.id}`)}
+            onHeart={() => handleToggleFavourite(item.id)}
+          />
         )}
-        ListEmptyComponent={<Text style={{color:colors.textMuted}}>{t("favourites")} empty</Text>}
-        contentContainerStyle={{gap:12}}
+        ListEmptyComponent={
+          <View style={styles.center}>
+            <Text style={{ color: colors.textMuted, fontSize: 16 }}>
+              {t("favourites")} {t("empty")}
+            </Text>
+          </View>
+        }
+        contentContainerStyle={{ padding: 16, gap: 12 }}
       />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  searchInput: {
+    margin: 16,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 16,
+  },
+});
