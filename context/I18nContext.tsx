@@ -6,7 +6,7 @@ type Lang = "en" | "si" | "ta";
 type Dict = Record<string, string>;
 
 const en: Dict = {
-  appName: "Taste of Sri Lanka",
+  appName: "TastyLanka",
   home: "Home", foods: "Foods", favourites: "Favourites",
   profile: "Profile", settings: "Settings",
   login: "Sign in", register: "Sign up", google: "Continue with Google",
