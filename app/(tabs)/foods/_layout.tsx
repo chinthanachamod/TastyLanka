@@ -6,7 +6,7 @@ const FavouritesLayout = () => {
   return (
     <Stack screenOptions={{ animation: "slide_from_right" }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="[id]" options={{ title: "Task Form" }} />
+      <Stack.Screen name="[id]" options={{ title: "FoodDetails" }} />
     </Stack>
   )
 }

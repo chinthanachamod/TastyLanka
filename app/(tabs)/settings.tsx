@@ -11,6 +11,7 @@ import {
 import LanguageSelector from "../../components/LanguageSelector";
 import ToggleDarkMode from "../../components/ToggleDarkMode";
 import { useTheme } from "../../context/ThemeContext";
+import { logout } from "@/services/authService";
 
 type SettingItemProps = {
   icon: string;
@@ -23,6 +24,18 @@ export default function Settings() {
   const { colors, isDark } = useTheme();
 
   const styles = createStyles(colors, isDark);
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+
+  const handleLogout = async () => {
+      setIsLoggingOut(true);
+      try {
+        await logout();
+      } catch (err) {
+        alert("Failed to sign out.");
+      } finally {
+        setIsLoggingOut(false);
+      }
+    };
 
   const SettingItem: React.FC<SettingItemProps> = ({ icon, title, description, rightComponent }) => (
     <View style={styles.settingItem}>
@@ -138,7 +151,11 @@ export default function Settings() {
           />
         </View>
 
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity 
+          style={styles.logoutButton}
+          onPress={handleLogout}
+          disabled={isLoggingOut}
+        >
           <Ionicons name="log-out" size={20} color="#ff3b30" />
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
