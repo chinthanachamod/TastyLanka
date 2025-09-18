@@ -11,8 +11,8 @@ const AuthLayout = () => {
             animation: "slide_from_right",
             }}
       />
-      <Stack.Screen name="login" options={{title: "Login"}} />
-      <Stack.Screen name="register" options={{title: "Register"}} />
+      <Stack.Screen name="login" options={{title: "Login", headerShown: false}} />
+      <Stack.Screen name="register" options={{title: "Register", headerShown: false}} />
     </Stack>
   )
 }

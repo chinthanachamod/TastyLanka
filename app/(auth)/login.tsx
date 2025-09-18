@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "700",
     color: ORANGE,
     marginBottom: 20,
