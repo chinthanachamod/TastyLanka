@@ -1,4 +1,5 @@
 import FoodCard from "@/components/FoodCard";
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "@/context/AuthContext";
 import { useI18n } from "@/context/I18nContext";
 import { useTheme } from "@/context/ThemeContext";
@@ -103,16 +104,24 @@ export default function Favourites() {
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
       {/* Search Bar */}
-      <TextInput
-        placeholder={t("search")}
-        placeholderTextColor={colors.textMuted}
-        value={search}
-        onChangeText={setSearch}
-        style={[
-          styles.searchInput,
-          { backgroundColor: colors.card, color: colors.text, borderColor: colors.border },
-        ]}
-      />
+      <View style={{ position: 'relative', margin: 16 }}>
+        <TextInput
+          placeholder={t("search")}
+          placeholderTextColor={colors.textMuted}
+          value={search}
+          onChangeText={setSearch}
+          style={[
+            styles.searchInput,
+            { backgroundColor: colors.card, color: colors.text, borderColor: colors.border, paddingRight: 38 },
+          ]}
+        />
+        <Ionicons
+          name="search"
+          size={20}
+          color={colors.textMuted}
+          style={{ position: 'absolute', right: 12, top: 14, zIndex: 1 }}
+        />
+      </View>
 
       {/* Favourites List */}
       <FlatList
@@ -149,7 +158,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchInput: {
-    margin: 16,
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,
