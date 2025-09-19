@@ -154,7 +154,7 @@ export default function Home() {
         {/* Welcome Section */}
         <View style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 15 }}>
           <Text style={{ color: colors.text, fontSize: 24, fontWeight: "700", marginBottom: 5 }}>
-            Welcome back, {"\n"}{userName}!
+            Welcome back, {"\n"}{userName} !
           </Text>
           <Text style={{ color: colors.textMuted, fontSize: 16 }}>
             What would you like to cook or eat today?

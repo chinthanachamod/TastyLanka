@@ -49,15 +49,15 @@
 //   );
 // }
 
-import React from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity, Linking } from "react-native";
-import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import React from "react";
+import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useI18n } from "../../../context/I18nContext";
+import { useTheme } from "../../../context/ThemeContext";
+import { addFavouriteTxn, getMyFavourites, removeFavouriteTxn } from "../../../services/favouritesService";
 import { getFood } from "../../../services/foodService";
 import { Food } from "../../../types/food";
-import { addFavouriteTxn, getMyFavourites, removeFavouriteTxn } from "../../../services/favouritesService";
-import { useTheme } from "../../../context/ThemeContext";
-import { useI18n } from "../../../context/I18nContext";
 
 export default function FoodDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -118,6 +118,36 @@ export default function FoodDetails() {
             />
           </TouchableOpacity>
         </View>
+
+
+        {/* Categories */}
+        {food.categories && food.categories.length > 0 && (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 14, marginBottom: 18 }}>
+            {food.categories.map((cat, idx) => (
+              <View
+                key={idx}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: colors.accent,
+                  borderRadius: 20,
+                  paddingHorizontal: 16,
+                  paddingVertical: 6,
+                  marginRight: 10,
+                  marginBottom: 10,
+                  shadowColor: colors.accent,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}
+              >
+                <Ionicons name="pricetag" size={16} color="#fff" style={{ marginRight: 6 }} />
+                <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{cat}</Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         {/* Description */}
         <Text style={{ color: colors.textMuted, marginTop: 6 }}>
