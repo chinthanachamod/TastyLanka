@@ -472,6 +472,9 @@ const AddFoodScreen = () => {
         
         
         {/* Category Suggestions */}
+        <Text style={{ fontWeight: '600', color: colors.text, marginTop: 10, marginBottom: 4, fontSize: 15 }}>
+          Category Suggestions
+        </Text>
         <View style={styles.categoryContainer}>
           {categorySuggestions
             .filter(s => s.toLowerCase().includes(categoryInput.toLowerCase()) && !categories.includes(s))
