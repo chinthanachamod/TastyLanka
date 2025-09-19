@@ -83,11 +83,12 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
 import { useI18n } from "../../context/I18nContext";
 import { useTheme } from "../../context/ThemeContext";
+import { getUserProfile } from "../../services/userService";
 
 const { width } = Dimensions.get('window');
 
@@ -99,10 +100,20 @@ export default function Home() {
   const [userName, setUserName] = useState("User"); // fallback
 
   useEffect(() => {
-    // Fetch logged-in user's name if available
-    if (user) {
-      setUserName(user.displayName || user.email || "User");
-    }
+    // Fetch logged-in user's full name from Firestore if available
+    const fetchName = async () => {
+      if (user?.uid) {
+        try {
+          const profile = await getUserProfile(user.uid);
+          if (profile?.fullName) {
+            setUserName(profile.fullName);
+            return;
+          }
+        } catch {}
+      }
+      setUserName(user?.displayName || user?.email || "User");
+    };
+    fetchName();
   }, [user]);
 
   // Sample featured dishes
@@ -143,7 +154,7 @@ export default function Home() {
         {/* Welcome Section */}
         <View style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 15 }}>
           <Text style={{ color: colors.text, fontSize: 24, fontWeight: "700", marginBottom: 5 }}>
-            Welcome back, {userName}!
+            Welcome back, {"\n"}{userName}!
           </Text>
           <Text style={{ color: colors.textMuted, fontSize: 16 }}>
             What would you like to cook or eat today?
