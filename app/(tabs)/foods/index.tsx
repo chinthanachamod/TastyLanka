@@ -53,8 +53,9 @@
 // }
 
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 import { FlatList, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
 import FoodCard from "../../../components/FoodCard";
 import { useI18n } from "../../../context/I18nContext";
@@ -77,22 +78,27 @@ export default function Foods() {
   const [q, setQ] = React.useState("");
   const [filtered, setFiltered] = React.useState<Food[]>([]);
 
-  // ✅ Load foods + favourites
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const [f, ids] = await Promise.all([
-          getFoods(),
-          getMyFavourites().catch(() => []),
-        ]);
-        setFoods(f);
-        setFiltered(f); // show all foods initially
-        setFavIds(ids);
-      } catch (error) {
-        console.log("Error loading foods:", error);
-      }
-    })();
+  // Load foods + favourites
+  const loadFoods = useCallback(async () => {
+    try {
+      const [f, ids] = await Promise.all([
+        getFoods(),
+        getMyFavourites().catch(() => []),
+      ]);
+      setFoods(f);
+      setFiltered(f); // show all foods initially
+      setFavIds(ids);
+    } catch (error) {
+      console.log("Error loading foods:", error);
+    }
   }, []);
+
+  // Refresh foods when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      loadFoods();
+    }, [loadFoods])
+  );
 
   // ✅ Search when pressing the button
   const handleSearch = () => {
