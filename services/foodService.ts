@@ -42,6 +42,7 @@ export const addFood = async (food: Omit<Food, "id">): Promise<string> => {
   return docRef.id;
 };
 
+
 /**
  * Get all foods, ordered by name
  */

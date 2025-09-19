@@ -52,19 +52,19 @@
 //   );
 // }
 
-import React from "react";
-import { View, TextInput, FlatList, ViewStyle, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { getFoods } from "../../../services/foodService";
+import { useRouter } from "expo-router";
+import React from "react";
+import { FlatList, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
+import FoodCard from "../../../components/FoodCard";
+import { useI18n } from "../../../context/I18nContext";
+import { useTheme } from "../../../context/ThemeContext";
 import {
-  getMyFavourites,
   addFavouriteTxn,
+  getMyFavourites,
   removeFavouriteTxn,
 } from "../../../services/favouritesService";
-import FoodCard from "../../../components/FoodCard";
-import { useTheme } from "../../../context/ThemeContext";
-import { useI18n } from "../../../context/I18nContext";
-import { useRouter } from "expo-router";
+import { getFoods } from "../../../services/foodService";
 import { Food } from "../../../types/food";
 
 export default function Foods() {
@@ -180,6 +180,29 @@ export default function Foods() {
           </View>
         }
       />
+      {/* Floating Add Food Button */}
+      <TouchableOpacity
+        onPress={() => router.push('/(tabs)/foods/add')}
+        style={{
+          position: 'absolute',
+          right: 24,
+          bottom: 32,
+          backgroundColor: colors.accent,
+          borderRadius: 32,
+          width: 56,
+          height: 56,
+          alignItems: 'center',
+          justifyContent: 'center',
+          elevation: 4,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+        }}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="add" size={32} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 }

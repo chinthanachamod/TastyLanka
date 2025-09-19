@@ -1,65 +1,553 @@
+// import React, { useState } from 'react';
+// import { Alert, Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+// import { addFood } from '../../../services/foodService';
+
+// const AddFoodScreen = () => {
+//   const [name, setName] = useState('');
+//   const [region, setRegion] = useState('');
+//   const [description, setDescription] = useState('');
+//   const [imageUrl, setImageUrl] = useState('');
+//   const [restaurants, setRestaurants] = useState([
+//     { name: '' },
+//   ]);
+//   const categorySuggestions = [
+//     'Dessert',
+//     'Main Course',
+//     'Streetfood',
+//     'Appetizer',
+//     'Beverage',
+//     'Breakfast',
+//     'Lunch',
+//     'Dinner',
+//     'Snack',
+//     'Vegan',
+//     'Vegetarian',
+//     'Seafood',
+//     'Traditional',
+//   ];
+//   const [categories, setCategories] = useState<string[]>([]);
+//   const [categoryInput, setCategoryInput] = useState('');
+//   const [loading, setLoading] = useState(false);
+
+//   const handleAddFood = async () => {
+//     if (!name || !region || !description || !imageUrl) {
+//       Alert.alert('Please fill all fields');
+//       return;
+//     }
+//     for (const r of restaurants) {
+//       if (!r.name) {
+//         Alert.alert('Please fill all restaurant names');
+//         return;
+//       }
+//     }
+//     setLoading(true);
+//     try {
+//       await addFood({
+//         name,
+//         region,
+//         imageUrl,
+//         description,
+//         restaurants: restaurants.map(r => ({
+//           name: r.name,
+//           address: '',
+//           lat: 0,
+//           lng: 0,
+//         })),
+//   rating: 0,
+//   favouritesCount: 0,
+//   categories,
+//   tags: [],
+//       });
+//       Alert.alert('Food added successfully!');
+//       setName('');
+//       setRegion('');
+//       setDescription('');
+//       setImageUrl('');
+//       setRestaurants([{ name: '' }]);
+//       setCategories([]);
+//       setCategoryInput('');
+//     } catch (error) {
+//       let message = 'Unknown error';
+//       if (error instanceof Error) message = error.message;
+//       Alert.alert('Error adding food', message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+//       <Text style={styles.label}>Name</Text>
+//       <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Food name" />
+//       <Text style={styles.label}>Region</Text>
+//       <TextInput style={styles.input} value={region} onChangeText={setRegion} placeholder="Region" />
+//       <Text style={styles.label}>Description</Text>
+//       <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Description" />
+//       <Text style={styles.label}>Image URL</Text>
+//       <TextInput style={styles.input} value={imageUrl} onChangeText={setImageUrl} placeholder="Image URL" />
+
+//       {/* Categories */}
+//       <Text style={[styles.label, { marginTop: 16 }]}>Categories</Text>
+//       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
+//         {categories.map((cat, idx) => (
+//           <View key={cat+idx} style={{ backgroundColor: '#eee', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, marginRight: 6, marginBottom: 6, flexDirection: 'row', alignItems: 'center' }}>
+//             <Text>{cat}</Text>
+//             <Text style={{ marginLeft: 4, color: '#d33', fontWeight: 'bold' }} onPress={() => setCategories(categories.filter((c, i) => i !== idx))}>×</Text>
+//           </View>
+//         ))}
+//       </View>
+//       <TextInput
+//         style={styles.input}
+//         value={categoryInput}
+//         onChangeText={setCategoryInput}
+//         placeholder="Add or select a category"
+//         onSubmitEditing={() => {
+//           if (categoryInput && !categories.includes(categoryInput)) {
+//             setCategories([...categories, categoryInput]);
+//             setCategoryInput('');
+//           }
+//         }}
+//       />
+//       {/* Suggestions */}
+//       <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 }}>
+//         {categorySuggestions.filter(s => s.toLowerCase().includes(categoryInput.toLowerCase()) && !categories.includes(s)).map(s => (
+//           <Text
+//             key={s}
+//             style={{ backgroundColor: '#f0f0f0', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, marginRight: 6, marginBottom: 6, color: '#333' }}
+//             onPress={() => {
+//               setCategories([...categories, s]);
+//               setCategoryInput('');
+//             }}
+//           >
+//             {s}
+//           </Text>
+//         ))}
+//       </View>
+
+//       <Text style={[styles.label, { marginTop: 16 }]}>Restaurants</Text>
+//       {restaurants.map((r, idx) => (
+//         <View key={idx} style={{ marginBottom: 10, borderWidth: 1, borderColor: '#eee', borderRadius: 5, padding: 8 }}>
+//           <Text style={styles.label}>Name</Text>
+//           <TextInput style={styles.input} value={r.name} onChangeText={v => {
+//             const arr = [...restaurants]; arr[idx].name = v; setRestaurants(arr);
+//           }} placeholder="Restaurant name" />
+//           <Button
+//             title="Search on Google Maps"
+//             onPress={() => {
+//               const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}`;
+//               window.open ? window.open(url, '_blank') : Alert.alert('Open this URL in your browser:', url);
+//             }}
+//           />
+//           {restaurants.length > 1 && (
+//             <Button title="Remove" color="#d33" onPress={() => {
+//               setRestaurants(restaurants.filter((_, i) => i !== idx));
+//             }} />
+//           )}
+//         </View>
+//       ))}
+//       <Button title="Add Restaurant" onPress={() => setRestaurants([...restaurants, { name: '' }])} />
+
+//       <Button title={loading ? 'Adding...' : 'Add Food'} onPress={handleAddFood} disabled={loading} />
+//     </ScrollView>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+//   label: { fontWeight: 'bold', marginTop: 10 },
+//   input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8, marginTop: 5 },
+// });
+
+// export default AddFoodScreen;
+
+
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { useTheme } from '../../../context/ThemeContext';
 import { addFood } from '../../../services/foodService';
 
 const AddFoodScreen = () => {
+  const { colors } = useTheme();
   const [name, setName] = useState('');
+  const [region, setRegion] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [price, setPrice] = useState('');
+  const [restaurants, setRestaurants] = useState([{ name: '' }]);
+  
+  const categorySuggestions = [
+    'Dessert', 'Main Course', 'Streetfood', 'Appetizer', 'Beverage', 
+    'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Vegan', 
+    'Vegetarian', 'Seafood', 'Traditional', 'Spicy', 'Sweet'
+  ];
+  
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryInput, setCategoryInput] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleAddFood = async () => {
-    if (!name || !description || !imageUrl || !price) {
-      Alert.alert('Please fill all fields');
+    if (!name || !region || !description || !imageUrl) {
+      Alert.alert('Missing Information', 'Please fill all required fields');
       return;
     }
+    
+    for (const r of restaurants) {
+      if (!r.name) {
+        Alert.alert('Missing Information', 'Please fill all restaurant names');
+        return;
+      }
+    }
+    
     setLoading(true);
     try {
       await addFood({
         name,
-        description,
+        region,
         imageUrl,
-  // price: parseFloat(price), // Removed, not in Food type
-        region: '',
+        description,
+        restaurants: restaurants.map(r => ({
+          name: r.name,
+          address: '',
+          lat: 0,
+          lng: 0,
+        })),
         rating: 0,
-        restaurants: [],
         favouritesCount: 0,
+        categories,
         tags: [],
       });
-      Alert.alert('Food added successfully!');
+      
+      Alert.alert('Success', 'Food added successfully!');
+      // Reset form
       setName('');
+      setRegion('');
       setDescription('');
       setImageUrl('');
-      setPrice('');
+      setRestaurants([{ name: '' }]);
+      setCategories([]);
+      setCategoryInput('');
     } catch (error) {
-      let message = 'Unknown error';
+      let message = 'Unknown error occurred';
       if (error instanceof Error) message = error.message;
-      Alert.alert('Error adding food', message);
+      Alert.alert('Error', `Failed to add food: ${message}`);
     } finally {
       setLoading(false);
     }
   };
 
+  const styles = StyleSheet.create({
+    container: { 
+      padding: 20, 
+      backgroundColor: colors.bg 
+    },
+    header: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      color: colors.text,
+      textAlign: 'center'
+    },
+    label: { 
+      fontWeight: '600', 
+      marginTop: 16, 
+      marginBottom: 6,
+      color: colors.text,
+      fontSize: 16
+    },
+    input: { 
+      borderWidth: 1, 
+      borderColor: colors.border, 
+      borderRadius: 12, 
+      padding: 16, 
+      marginTop: 5,
+      backgroundColor: colors.surface,
+      color: colors.text,
+      fontSize: 16
+    },
+    categoryContainer: {
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
+      marginBottom: 12
+    },
+    categoryPill: {
+      backgroundColor: colors.accent + '20',
+      borderRadius: 20,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      marginRight: 8,
+      marginBottom: 8,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    categoryText: {
+      color: colors.accent,
+      fontWeight: '500'
+    },
+    suggestionPill: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      marginRight: 8,
+      marginBottom: 8,
+      borderWidth: 1,
+      borderColor: colors.border
+    },
+    suggestionText: {
+      color: colors.text,
+      fontSize: 14
+    },
+    restaurantCard: {
+      marginBottom: 16, 
+      borderWidth: 1, 
+      borderColor: colors.border, 
+      borderRadius: 16, 
+      padding: 16, 
+      backgroundColor: colors.surface
+    },
+    button: {
+      backgroundColor: colors.accent,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 20,
+      flexDirection: 'row'
+    },
+    buttonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 16,
+      marginLeft: 8
+    },
+    secondaryButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      padding: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 12
+    },
+    secondaryButtonText: {
+      color: colors.text,
+      fontWeight: '600',
+      fontSize: 16
+    },
+    removeButton: {
+      backgroundColor: '#ff3b30' + '20',
+      borderRadius: 8,
+      padding: 10,
+      alignItems: 'center',
+      marginTop: 10
+    },
+    removeButtonText: {
+      color: '#ff3b30',
+      fontWeight: '600'
+    },
+    mapsButton: {
+  backgroundColor: colors.accent + '10',
+      borderRadius: 8,
+      padding: 10,
+      alignItems: 'center',
+      marginTop: 10,
+      flexDirection: 'row',
+      justifyContent: 'center'
+    },
+    mapsButtonText: {
+  color: colors.accent,
+      fontWeight: '600',
+      marginLeft: 6
+    }
+  });
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Name</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Food name" />
-      <Text style={styles.label}>Description</Text>
-      <TextInput style={styles.input} value={description} onChangeText={setDescription} placeholder="Description" />
-  <Text style={styles.label}>Image URL</Text>
-  <TextInput style={styles.input} value={imageUrl} onChangeText={setImageUrl} placeholder="Image URL" />
-      <Text style={styles.label}>Price</Text>
-      <TextInput style={styles.input} value={price} onChangeText={setPrice} placeholder="Price" keyboardType="numeric" />
-      <Button title={loading ? 'Adding...' : 'Add Food'} onPress={handleAddFood} disabled={loading} />
-    </View>
+    <KeyboardAvoidingView 
+      style={{ flex: 1, backgroundColor: colors.bg }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.header}>Add New Food</Text>
+        
+        <Text style={styles.label}>Food Name *</Text>
+        <TextInput 
+          style={styles.input} 
+          value={name} 
+          onChangeText={setName} 
+          placeholder="Enter food name" 
+          placeholderTextColor={colors.textMuted}
+        />
+        
+        <Text style={styles.label}>Region *</Text>
+        <TextInput 
+          style={styles.input} 
+          value={region} 
+          onChangeText={setRegion} 
+          placeholder="Enter region (e.g., Colombo, Jaffna)" 
+          placeholderTextColor={colors.textMuted}
+        />
+        
+        <Text style={styles.label}>Description *</Text>
+        <TextInput 
+          style={[styles.input, { height: 100, textAlignVertical: 'top' }]} 
+          value={description} 
+          onChangeText={setDescription} 
+          placeholder="Describe this food item" 
+          placeholderTextColor={colors.textMuted}
+          multiline
+        />
+        
+        <Text style={styles.label}>Image URL *</Text>
+        <TextInput 
+          style={styles.input} 
+          value={imageUrl} 
+          onChangeText={setImageUrl} 
+          placeholder="Paste image URL" 
+          placeholderTextColor={colors.textMuted}
+        />
+
+        {/* Categories Section */}
+        <Text style={styles.label}>Categories</Text>
+        <View style={styles.categoryContainer}>
+          {categories.map((cat, idx) => (
+            <View key={cat+idx} style={styles.categoryPill}>
+              <Text style={styles.categoryText}>{cat}</Text>
+              <TouchableOpacity 
+                onPress={() => setCategories(categories.filter((c, i) => i !== idx))}
+                style={{ marginLeft: 6 }}
+              >
+                <Ionicons name="close-circle" size={18} color={colors.accent} />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+        
+        <TextInput
+          style={styles.input}
+          value={categoryInput}
+          onChangeText={setCategoryInput}
+          placeholder="Add or select a category"
+          placeholderTextColor={colors.textMuted}
+          onSubmitEditing={() => {
+            if (categoryInput && !categories.includes(categoryInput)) {
+              setCategories([...categories, categoryInput]);
+              setCategoryInput('');
+            }
+          }}
+        />
+        
+        {/* Category Suggestions */}
+        <View style={styles.categoryContainer}>
+          {categorySuggestions
+            .filter(s => s.toLowerCase().includes(categoryInput.toLowerCase()) && !categories.includes(s))
+            .map(s => (
+              <TouchableOpacity
+                key={s}
+                style={styles.suggestionPill}
+                onPress={() => {
+                  setCategories([...categories, s]);
+                  setCategoryInput('');
+                }}
+              >
+                <Text style={styles.suggestionText}>{s}</Text>
+              </TouchableOpacity>
+            ))
+          }
+        </View>
+
+        {/* Restaurants Section */}
+        <Text style={styles.label}>Restaurants</Text>
+        {restaurants.map((r, idx) => (
+          <View key={idx} style={styles.restaurantCard}>
+            <Text style={styles.label}>Restaurant Name</Text>
+            <TextInput 
+              style={styles.input} 
+              value={r.name} 
+              onChangeText={v => {
+                const arr = [...restaurants]; 
+                arr[idx].name = v; 
+                setRestaurants(arr);
+              }} 
+              placeholder="Enter restaurant name" 
+              placeholderTextColor={colors.textMuted}
+            />
+            
+            <TouchableOpacity
+              style={styles.mapsButton}
+              onPress={() => {
+                const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}`;
+                // For React Native, you might use Linking.openURL instead
+                Alert.alert(
+                  "Open Google Maps", 
+                  `Search for "${r.name}" on Google Maps?`,
+                  [
+                    { text: "Cancel", style: "cancel" },
+                    { text: "Open", onPress: () => {
+                      // In a real app, you would use: Linking.openURL(url);
+                      Alert.alert("Google Maps", `Would open: ${url}`);
+                    }}
+                  ]
+                );
+              }}
+            >
+              <Ionicons name="map-outline" size={18} color={colors.accent} />
+              <Text style={styles.mapsButtonText}>Search on Google Maps</Text>
+            </TouchableOpacity>
+            
+            {restaurants.length > 1 && (
+              <TouchableOpacity 
+                style={styles.removeButton}
+                onPress={() => {
+                  setRestaurants(restaurants.filter((_, i) => i !== idx));
+                }}
+              >
+                <Text style={styles.removeButtonText}>Remove Restaurant</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ))}
+        
+        <TouchableOpacity 
+          style={styles.secondaryButton}
+          onPress={() => setRestaurants([...restaurants, { name: '' }])}
+        >
+          <Text style={styles.secondaryButtonText}>
+            <Ionicons name="add" size={18} /> Add Another Restaurant
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleAddFood} 
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="restaurant" size={20} color="#fff" />
+              <Text style={styles.buttonText}>Add Food</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  label: { fontWeight: 'bold', marginTop: 10 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 8, marginTop: 5 },
-});
 
 export default AddFoodScreen;
