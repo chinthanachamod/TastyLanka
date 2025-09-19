@@ -39,6 +39,7 @@
 
 
 import { auth, db } from "@/services/firebase";
+import { Food } from "@/types/food";
 import {
   collection,
   doc,
@@ -46,7 +47,6 @@ import {
   query,
   runTransaction,
 } from "firebase/firestore";
-import { Food } from "@/types/food";
 
 /**
  * Reference to the user's favourites subcollection
@@ -64,8 +64,10 @@ export const addFavouriteTxn = async (food: Food): Promise<void> => {
   const foodRef = doc(db, "foods", food.id);
 
   await runTransaction(db, async (tx) => {
-    tx.set(favRef, { addedAt: Date.now(), foodId: food.id });
+    // READS FIRST
     const f = await tx.get(foodRef);
+    // WRITES AFTER
+    tx.set(favRef, { addedAt: Date.now(), foodId: food.id });
     const current = (f.data()?.favouritesCount ?? 0) + 1;
     tx.set(foodRef, { favouritesCount: current }, { merge: true });
   });
@@ -82,8 +84,10 @@ export const removeFavouriteTxn = async (foodId: string): Promise<void> => {
   const foodRef = doc(db, "foods", foodId);
 
   await runTransaction(db, async (tx) => {
-    tx.delete(favRef);
+    // READS FIRST
     const f = await tx.get(foodRef);
+    // WRITES AFTER
+    tx.delete(favRef);
     const current = Math.max(0, (f.data()?.favouritesCount ?? 0) - 1);
     tx.set(foodRef, { favouritesCount: current }, { merge: true });
   });

@@ -66,18 +66,37 @@ export default function Favourites() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch favorites logic
+  // Fetch favorites logic with debug logs and fallback
   const fetchFavourites = useCallback(async () => {
     try {
       setLoading(true);
       if (!user?.uid) {
         setFoods([]);
+        console.log("No user UID");
         return;
       }
-      const favIds = await getMyFavourites().catch(() => []);
+      const favIds = await getMyFavourites().catch((e) => { console.log("getMyFavourites error", e); return []; });
+      console.log("Favorite IDs:", favIds);
       if (favIds.length > 0) {
-        const favFoods = await getFoodsByIds(favIds);
-        setFoods(favFoods.filter(Boolean) as Food[]);
+        let favFoods: Food[] = [];
+        try {
+          favFoods = await getFoodsByIds(favIds);
+          console.log("Fetched foods by IDs:", favFoods);
+        } catch (batchErr) {
+          console.log("Batch getFoodsByIds failed, trying one by one", batchErr);
+          // fallback: fetch one by one
+          const foodsArr = await Promise.all(favIds.map(async (id) => {
+            try {
+              const food = await import("@/services/foodService").then(m => m.getFood(id));
+              return food;
+            } catch (e) {
+              console.log("Error fetching food", id, e);
+              return null;
+            }
+          }));
+          favFoods = foodsArr.filter(Boolean) as Food[];
+        }
+        setFoods(favFoods);
       } else {
         setFoods([]);
       }
