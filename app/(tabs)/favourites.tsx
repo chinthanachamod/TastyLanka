@@ -44,8 +44,9 @@ import { useTheme } from "@/context/ThemeContext";
 import { getMyFavourites, removeFavouriteTxn } from "@/services/favouritesService";
 import { getFoodsByIds } from "@/services/foodService";
 import { Food } from "@/types/food";
+import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -65,32 +66,35 @@ export default function Favourites() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchFavourites = async () => {
-      try {
-        setLoading(true);
-        if (!user?.uid) {
-          setFoods([]);
-          return;
-        }
-
-  const favIds = await getMyFavourites().catch(() => []);
-        if (favIds.length > 0) {
-          const favFoods = await getFoodsByIds(favIds);
-          setFoods(favFoods.filter(Boolean) as Food[]);
-        } else {
-          setFoods([]);
-        }
-      } catch (error) {
-        console.error("Error fetching favourites:", error);
+  // Fetch favorites logic
+  const fetchFavourites = useCallback(async () => {
+    try {
+      setLoading(true);
+      if (!user?.uid) {
         setFoods([]);
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
-
-    fetchFavourites();
+      const favIds = await getMyFavourites().catch(() => []);
+      if (favIds.length > 0) {
+        const favFoods = await getFoodsByIds(favIds);
+        setFoods(favFoods.filter(Boolean) as Food[]);
+      } else {
+        setFoods([]);
+      }
+    } catch (error) {
+      console.error("Error fetching favourites:", error);
+      setFoods([]);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
+
+  // Auto-refresh on focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchFavourites();
+    }, [fetchFavourites])
+  );
 
   const handleToggleFavourite = async (foodId: string) => {
     if (!user?.uid) return;
