@@ -1,20 +1,30 @@
-import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useState } from "react";
 import {
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { logout } from "../../services/authService";
+import { getUserProfile } from "../../services/userService";
 
 export default function Profile() {
   const { colors } = useTheme();
   const { user } = useAuth();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [fullName, setFullName] = useState<string>("");
+
+  useEffect(() => {
+    if (user?.uid) {
+      getUserProfile(user.uid).then((profile) => {
+        setFullName(profile?.fullName || "");
+      });
+    }
+  }, [user?.uid]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
@@ -45,8 +55,8 @@ export default function Profile() {
           <Text style={styles.avatarText}>{getInitials(user?.email || "")}</Text>
         </LinearGradient>
 
-        <Text style={[styles.name, { color: colors.text }]}>
-          {user?.displayName || "User"}
+        <Text style={[styles.name, { color: colors.text }]}> 
+          {fullName || user?.displayName || "User"}
         </Text>
         <Text style={[styles.email, { color: colors.text + "99" }]}>
           {user?.email}
