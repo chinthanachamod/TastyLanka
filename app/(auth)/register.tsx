@@ -1,22 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  ImageBackground,
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
 } from "react-native";
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useI18n } from "../../context/I18nContext";
 import { useTheme } from "../../context/ThemeContext";
 import { register as signUpEmail } from "../../services/authService";
@@ -109,7 +109,7 @@ export default function Register() {
                     value={name}
                     onChangeText={setName}
                     autoCapitalize="words"
-                    style={[styles.input, { color: colors.text }]}
+                    style={[styles.input, { color: '#000' }]}
                   />
                 </View>
 
@@ -125,7 +125,7 @@ export default function Register() {
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    style={[styles.input, { color: colors.text }]}
+                    style={[styles.input, { color: '#000' }]}
                   />
                 </View>
 
@@ -140,7 +140,7 @@ export default function Register() {
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
-                    style={[styles.input, { color: colors.text }]}
+                    style={[styles.input, { color: '#000' }]}
                   />
                   <TouchableOpacity 
                     style={styles.passwordToggle}
@@ -165,7 +165,7 @@ export default function Register() {
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!showConfirmPassword}
-                    style={[styles.input, { color: colors.text }]}
+                    style={[styles.input, { color: '#000' }]}
                   />
                   <TouchableOpacity 
                     style={styles.passwordToggle}
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
   formInner: {
     padding: 30,
-    backgroundColor: 'rgba(255,255,255,0.8)', // reduced opacity
+    backgroundColor: 'rgba(0,0,0,0.5)', // black with reduced opacity
   },
   inputContainer: {
     flexDirection: 'row',
