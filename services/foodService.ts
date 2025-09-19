@@ -30,7 +30,17 @@ import {
   where,
 } from "firebase/firestore";
 
+
 const foodsCol = collection(db, "foods");
+
+/**
+ * Add a new food to Firestore
+ */
+export const addFood = async (food: Omit<Food, "id">): Promise<string> => {
+  const { addDoc } = await import("firebase/firestore");
+  const docRef = await addDoc(foodsCol, food);
+  return docRef.id;
+};
 
 /**
  * Get all foods, ordered by name
