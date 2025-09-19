@@ -167,6 +167,7 @@ import {
     ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
+    Linking,
     Platform,
     ScrollView,
     StyleSheet,
@@ -491,18 +492,7 @@ const AddFoodScreen = () => {
               style={styles.mapsButton}
               onPress={() => {
                 const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name)}`;
-                // For React Native, you might use Linking.openURL instead
-                Alert.alert(
-                  "Open Google Maps", 
-                  `Search for "${r.name}" on Google Maps?`,
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Open", onPress: () => {
-                      // In a real app, you would use: Linking.openURL(url);
-                      Alert.alert("Google Maps", `Would open: ${url}`);
-                    }}
-                  ]
-                );
+                Linking.openURL(url);
               }}
             >
               <Ionicons name="map-outline" size={18} color={colors.accent} />
