@@ -164,17 +164,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Linking,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { useTheme } from '../../../context/ThemeContext';
 import { addFood } from '../../../services/foodService';
@@ -186,6 +186,7 @@ const AddFoodScreen = () => {
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [restaurants, setRestaurants] = useState([{ name: '' }]);
+  const [rating, setRating] = useState(0);
   
   const categorySuggestions = [
     'Dessert', 'Main Course', 'Streetfood', 'Appetizer', 'Beverage', 
@@ -223,10 +224,10 @@ const AddFoodScreen = () => {
           lat: 0,
           lng: 0,
         })),
-        rating: 0,
+        rating,
         favouritesCount: 0,
         categories,
-        tags: [],
+        // tags: [],
       });
       
       Alert.alert('Success', 'Food added successfully!');
@@ -235,9 +236,10 @@ const AddFoodScreen = () => {
       setRegion('');
       setDescription('');
       setImageUrl('');
-      setRestaurants([{ name: '' }]);
-      setCategories([]);
-      setCategoryInput('');
+  setRestaurants([{ name: '' }]);
+  setCategories([]);
+  setCategoryInput('');
+  setRating(0);
     } catch (error) {
       let message = 'Unknown error occurred';
       if (error instanceof Error) message = error.message;
@@ -422,6 +424,22 @@ const AddFoodScreen = () => {
           placeholderTextColor={colors.textMuted}
         />
 
+        {/* Rating Section */}
+        <Text style={styles.label}>Rating</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+          {[1,2,3,4,5].map(num => (
+            <TouchableOpacity key={num} onPress={() => setRating(num)}>
+              <Ionicons
+                name={rating >= num ? 'star' : 'star-outline'}
+                size={28}
+                color={rating >= num ? colors.accent : colors.border}
+                style={{ marginHorizontal: 2 }}
+              />
+            </TouchableOpacity>
+          ))}
+          <Text style={{ marginLeft: 10, color: colors.text, fontWeight: '600' }}>{rating > 0 ? rating : ''}</Text>
+        </View>
+
         {/* Categories Section */}
         <Text style={styles.label}>Categories</Text>
         <View style={styles.categoryContainer}>
@@ -451,6 +469,7 @@ const AddFoodScreen = () => {
             }
           }}
         />
+        
         
         {/* Category Suggestions */}
         <View style={styles.categoryContainer}>

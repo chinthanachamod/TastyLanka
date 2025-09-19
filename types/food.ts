@@ -8,5 +8,5 @@ export type Food = {
   description: string;
   restaurants: { name: string; address: string; lat: number; lng: number; }[];
   favouritesCount: number;
-  tags: string[];
+  // tags: string[];
 };
