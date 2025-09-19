@@ -24,6 +24,7 @@ const AddFoodScreen = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [restaurants, setRestaurants] = useState([{ name: '' }]);
   const [rating, setRating] = useState(0);
+  const [ratingInput, setRatingInput] = useState('');
   
   const categorySuggestions = [
     'Dessert', 'Main Course', 'Streetfood', 'Appetizer', 'Beverage', 
@@ -61,7 +62,7 @@ const AddFoodScreen = () => {
           lat: 0,
           lng: 0,
         })),
-        rating,
+  rating,
         favouritesCount: 0,
         categories,
         // tags: [],
@@ -77,6 +78,7 @@ const AddFoodScreen = () => {
   setCategories([]);
   setCategoryInput('');
   setRating(0);
+  setRatingInput('');
     } catch (error) {
       let message = 'Unknown error occurred';
       if (error instanceof Error) message = error.message;
@@ -262,10 +264,13 @@ const AddFoodScreen = () => {
         />
 
         {/* Rating Section */}
-        <Text style={styles.label}>Rating</Text>
+        <Text style={styles.label}>Rating (0-5, decimals allowed)</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
           {[1,2,3,4,5].map(num => (
-            <TouchableOpacity key={num} onPress={() => setRating(num)}>
+            <TouchableOpacity key={num} onPress={() => {
+              setRating(num);
+              setRatingInput(num.toString());
+            }}>
               <Ionicons
                 name={rating >= num ? 'star' : 'star-outline'}
                 size={28}
@@ -274,7 +279,22 @@ const AddFoodScreen = () => {
               />
             </TouchableOpacity>
           ))}
-          <Text style={{ marginLeft: 10, color: colors.text, fontWeight: '600' }}>{rating > 0 ? rating : ''}</Text>
+          <TextInput
+            style={[styles.input, { width: 60, marginLeft: 10, paddingVertical: 4, textAlign: 'center' }]}
+            value={ratingInput}
+            onChangeText={text => {
+              // Only allow numbers and one decimal point
+              const sanitized = text.replace(/[^0-9.]/g, '');
+              setRatingInput(sanitized);
+              const num = parseFloat(sanitized);
+              if (!isNaN(num) && num >= 0 && num <= 5) {
+                setRating(num);
+              }
+            }}
+            placeholder="e.g. 4.5"
+            keyboardType="decimal-pad"
+            maxLength={4}
+          />
         </View>
 
         {/* Categories Section */}
