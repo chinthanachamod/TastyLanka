@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Image, Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -56,9 +56,14 @@ export default function FoodDetails() {
       <View style={{ padding: 16 }}>
         {/* Title + Favourite */}
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={{ color: colors.text, fontSize: 22, fontWeight: "800" }}>
-            {food.name}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: colors.text, fontSize: 22, fontWeight: "800" }}>
+              {food.name}
+            </Text>
+            <Text style={{ color: colors.textMuted, fontSize: 15, fontWeight: "600", marginTop: 2 }}>
+              {food.region}
+            </Text>
+          </View>
           <TouchableOpacity onPress={toggle}>
             <Ionicons
               name={isFav ? "heart" : "heart-outline"}
@@ -69,6 +74,27 @@ export default function FoodDetails() {
         </View>
 
 
+        {/* Rating */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginBottom: 2 }}>
+          {[1,2,3,4,5].map(num => {
+            let iconName: "star" | "star-half" | "star-o" = "star-o";
+            if (food.rating >= num) {
+              iconName = "star";
+            } else if (food.rating >= num - 0.5) {
+              iconName = "star-half";
+            }
+            return (
+              <FontAwesome
+                key={num}
+                name={iconName}
+                size={22}
+                color={food.rating >= num - 0.5 ? colors.accent : colors.border}
+                style={{ marginHorizontal: 1 }}
+              />
+            );
+          })}
+          <Text style={{ marginLeft: 8, color: colors.text, fontWeight: '700', fontSize: 16 }}>{food.rating?.toFixed(1)}</Text>
+        </View>
         {/* Categories */}
         {food.categories && food.categories.length > 0 && (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 14, marginBottom: 18 }}>
