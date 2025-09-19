@@ -53,133 +53,19 @@
 // }
 
 import React from "react";
-import { View, TextInput, FlatList, ViewStyle, Text } from "react-native";
+import { View, TextInput, FlatList, ViewStyle, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { getFoods } from "../../../services/foodService";
 import {
   getMyFavourites,
   addFavouriteTxn,
   removeFavouriteTxn,
 } from "../../../services/favouritesService";
-import FoodCard from "../../../components/FoodCard"; // ✅ FoodCard import
+import FoodCard from "../../../components/FoodCard";
 import { useTheme } from "../../../context/ThemeContext";
 import { useI18n } from "../../../context/I18nContext";
 import { useRouter } from "expo-router";
 import { Food } from "../../../types/food";
-
-// ✅ Sample foods (fallback if API fails)
-const sampleFastFoods: Food[] = [
-  {
-    id: "slff-1",
-    name: "Kottu Roti",
-    region: "Colombo",
-    rating: 4.8,
-    imageUrl:
-      "https://www.nestleprofessional.in/sites/default/files/2022-08/Kottu-756x471.jpg?w=400",
-    description:
-      "Chopped roti stir-fried with vegetables, eggs, and choice of meat, seasoned with aromatic spices and served hot.",
-    restaurants: [
-      { name: "Pilawoos", address: "Galle Road, Colombo", lat: 6.9271, lng: 79.8612 },
-      { name: "Bombay Sweet Mahal", address: "Pettah, Colombo", lat: 6.9344, lng: 79.8508 },
-    ],
-    favouritesCount: 1250,
-    tags: ["street food", "spicy", "quick meal"],
-  },
-  {
-    id: "slff-2",
-    name: "Hoppers (Appa)",
-    region: "Southern",
-    rating: 4.6,
-    imageUrl:
-      "https://i0.wp.com/www.lavenderandlovage.com/wp-content/uploads/2016/05/Sri-Lankan-Egg-Hoppers-for-Breakfast.jpg?fit=1200%2C901&ssl=1?w=400",
-    description:
-      "Bowl-shaped pancakes made from fermented rice flour and coconut milk, often with an egg in the center.",
-    restaurants: [
-      { name: "Nana's Hoppers", address: "Galle", lat: 6.0329, lng: 80.2168 },
-      { name: "Upali's", address: "Colombo 7", lat: 6.9022, lng: 79.8607 },
-    ],
-    favouritesCount: 980,
-    tags: ["breakfast", "vegetarian", "coconut"],
-  },
-  {
-    id: "slff-3",
-    name: "String Hoppers (Idiyappam)",
-    region: "Jaffna",
-    rating: 4.5,
-    imageUrl:
-      "https://tb-static.uber.com/prod/image-proc/processed_images/b895a684f043c79d93790099b39bd22c/820883a48567670acbd720bc76391291.jpeg?w=400",
-    description:
-      "Steamed rice noodles served with curry, sambol, and sometimes coconut milk.",
-    restaurants: [
-      { name: "Jaffna Heritage", address: "Jaffna Town", lat: 9.6615, lng: 80.0255 },
-      { name: "Mango Tree", address: "Colombo 3", lat: 6.9106, lng: 79.8542 },
-    ],
-    favouritesCount: 750,
-    tags: ["breakfast", "vegetarian", "noodles"],
-  },
-  {
-    id: "slff-4",
-    name: "Egg Roti",
-    region: "Hill Country",
-    rating: 4.4,
-    imageUrl: "https://i.ytimg.com/vi/3KTPzspKhHI/maxresdefault.jpg?w=400",
-    description:
-      "Flatbread stuffed with spiced egg mixture and pan-fried to perfection.",
-    restaurants: [
-      { name: "Kandy Street Food", address: "Kandy", lat: 7.2906, lng: 80.6337 },
-      { name: "Nuwara Eliya Night Market", address: "Nuwara Eliya", lat: 6.9497, lng: 80.7891 },
-    ],
-    favouritesCount: 620,
-    tags: ["street food", "quick meal", "egg"],
-  },
-  {
-    id: "slff-5",
-    name: "Vadai",
-    region: "Northern",
-    rating: 4.3,
-    imageUrl:
-      "https://images.squarespace-cdn.com/content/v1/63853bbd17ae0f4557bfa6ff/4daffa6e-4cc6-482e-8cff-18a26e6af9a9/Parippu+Vadai.jpg?w=400",
-    description:
-      "Crispy deep-fried lentil fritters with spices and onions, a popular snack.",
-    restaurants: [
-      { name: "Northern Delights", address: "Jaffna", lat: 9.6615, lng: 80.0255 },
-      { name: "Colombo Vadai Corner", address: "Pettah, Colombo", lat: 6.9344, lng: 79.8508 },
-    ],
-    favouritesCount: 890,
-    tags: ["snack", "vegetarian", "crispy"],
-  },
-  {
-    id: "slff-6",
-    name: "Chicken Curry",
-    region: "Countrywide",
-    rating: 4.7,
-    imageUrl:
-      "https://cookstrap.com/storage/images/T1ov27pBOVXpmmYi2RECo9L5Y81hzEuzF0kBWbgl.jpg?w=400",
-    description:
-      "Spicy Sri Lankan chicken curry cooked with roasted spices and coconut milk.",
-    restaurants: [
-      { name: "Ministry of Crab", address: "Colombo Fort", lat: 6.9344, lng: 79.8508 },
-      { name: "Green Cabin", address: "Colombo 3", lat: 6.9106, lng: 79.8542 },
-    ],
-    favouritesCount: 1350,
-    tags: ["main course", "spicy", "non-vegetarian"],
-  },
-  {
-    id: "slff-7",
-    name: "Lamprais",
-    region: "Burgher",
-    rating: 4.6,
-    imageUrl:
-      "https://upload.wikimedia.org/wikipedia/commons/8/8e/Lamprais_%282%29.jpg?w=400",
-    description:
-      "A Dutch Burgher influenced dish of rice cooked in stock with accompaniments, wrapped in banana leaves and baked.",
-    restaurants: [
-      { name: "Burgher Union", address: "Colombo 6", lat: 6.8789, lng: 79.8575 },
-      { name: "Dutch Burgher Union", address: "Colombo 7", lat: 6.9022, lng: 79.8607 },
-    ],
-    favouritesCount: 720,
-    tags: ["traditional", "special occasion", "fusion"],
-  },
-];
 
 export default function Foods() {
   const { colors } = useTheme();
@@ -189,8 +75,9 @@ export default function Foods() {
   const [foods, setFoods] = React.useState<Food[]>([]);
   const [favIds, setFavIds] = React.useState<string[]>([]);
   const [q, setQ] = React.useState("");
+  const [filtered, setFiltered] = React.useState<Food[]>([]);
 
-  // ✅ Load foods + favourites (with fallback)
+  // ✅ Load foods + favourites
   React.useEffect(() => {
     (async () => {
       try {
@@ -199,19 +86,25 @@ export default function Foods() {
           getMyFavourites().catch(() => []),
         ]);
         setFoods(f);
+        setFiltered(f); // show all foods initially
         setFavIds(ids);
       } catch (error) {
-        console.log("Using sample data due to API error:", error);
-        setFoods(sampleFastFoods);
-        setFavIds([]);
+        console.log("Error loading foods:", error);
       }
     })();
   }, []);
 
-  // ✅ Filter foods by search query
-  const filtered = foods.filter((x) =>
-    x.name.toLowerCase().includes(q.toLowerCase())
-  );
+  // ✅ Search when pressing the button
+  const handleSearch = () => {
+    if (!q.trim()) {
+      setFiltered(foods); // reset to all if search is empty
+    } else {
+      const result = foods.filter((x) =>
+        x.name.toLowerCase().includes(q.toLowerCase())
+      );
+      setFiltered(result);
+    }
+  };
 
   // ✅ Handle favourite toggle
   const toggleFav = async (it: Food) => {
@@ -227,22 +120,36 @@ export default function Foods() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, padding: 16 }}>
-      {/* Search bar */}
-      <TextInput
-        value={q}
-        onChangeText={setQ}
-        placeholder={t("searchFoods")}
-        placeholderTextColor={colors.textMuted}
+      {/* Search bar + button */}
+      <View
         style={{
+          flexDirection: "row",
           backgroundColor: colors.surface,
           borderRadius: 14,
-          padding: 12,
-          color: colors.text,
           borderWidth: 1,
           borderColor: colors.border,
           marginBottom: 12,
+          alignItems: "center",
         }}
-      />
+      >
+        <TextInput
+          value={q}
+          onChangeText={setQ}
+          placeholder={t("searchFoods")}
+          placeholderTextColor={colors.textMuted}
+          style={{
+            flex: 1,
+            padding: 12,
+            color: colors.text,
+          }}
+        />
+        <TouchableOpacity
+          onPress={handleSearch}
+          style={{ paddingHorizontal: 12 }}
+        >
+          <Ionicons name="search" size={22} color={colors.text} />
+        </TouchableOpacity>
+      </View>
 
       {/* Food list */}
       <FlatList
@@ -276,5 +183,3 @@ export default function Foods() {
     </View>
   );
 }
-
-
