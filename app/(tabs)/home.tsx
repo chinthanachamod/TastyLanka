@@ -83,6 +83,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { ResizeMode, Video } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../context/AuthContext";
@@ -98,6 +99,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
   const { user } = useAuth(); // logged-in user
   const [userName, setUserName] = useState("User"); // fallback
+  const router = useRouter();
 
   useEffect(() => {
     // Fetch logged-in user's full name from Firestore if available
@@ -165,7 +167,7 @@ export default function Home() {
         <View style={{ marginBottom: 30 }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 20, marginBottom: 15 }}>
             <Text style={{ color: colors.text, fontSize: 20, fontWeight: "700" }}>Featured Dishes</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/foods')}>
               <Text style={{ color: colors.accent, fontWeight: "600" }}>View all</Text>
             </TouchableOpacity>
           </View>
