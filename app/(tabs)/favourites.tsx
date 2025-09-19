@@ -1,11 +1,11 @@
 import FoodCard from "@/components/FoodCard";
-import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from "@/context/AuthContext";
 import { useI18n } from "@/context/I18nContext";
 import { useTheme } from "@/context/ThemeContext";
 import { getMyFavourites, removeFavouriteTxn } from "@/services/favouritesService";
 import { getFoodsByIds } from "@/services/foodService";
 import { Food } from "@/types/food";
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
