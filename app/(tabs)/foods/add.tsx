@@ -31,7 +31,7 @@ const AddFoodScreen = () => {
   
   const categorySuggestions = [
     'Dessert', 'Main Course', 'Streetfood', 'Appetizer', 'Beverage', 
-    'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Vegan', 
+    'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Vegan', 'Side Dish',
     'Vegetarian', 'Seafood', 'Traditional', 'Spicy', 'Sweet'
   ];
   
@@ -56,12 +56,10 @@ const AddFoodScreen = () => {
     try {
       let userName = 'Unknown';
       if (user) {
-        // Try to get displayName from Firebase Auth first
-        userName = user.displayName || '';
-        if (!userName) {
-          // Fallback: fetch from user profile in Firestore
-          const profile = await getUserProfile(user.uid);
-          if (profile && profile.name) userName = profile.name;
+        // Always use Firestore profile fullName if available, then name
+        const profile = await getUserProfile(user.uid);
+        if (profile) {
+          userName = profile.fullName || profile.name || 'Unknown';
         }
       }
       await addFood({
