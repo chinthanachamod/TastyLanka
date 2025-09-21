@@ -1,17 +1,18 @@
+import { logout } from "@/services/authService";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import LanguageSelector from "../../components/LanguageSelector";
 import ToggleDarkMode from "../../components/ToggleDarkMode";
+import { useI18n } from "../../context/I18nContext";
 import { useTheme } from "../../context/ThemeContext";
-import { logout } from "@/services/authService";
 
 type SettingItemProps = {
   icon: string;
@@ -22,6 +23,7 @@ type SettingItemProps = {
 
 export default function Settings() {
   const { colors, isDark } = useTheme();
+  const { t } = useI18n();
 
   const styles = createStyles(colors, isDark);
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
@@ -31,7 +33,7 @@ export default function Settings() {
       try {
         await logout();
       } catch (err) {
-        alert("Failed to sign out.");
+  alert(t("signOutFailed"));
       } finally {
         setIsLoggingOut(false);
       }
@@ -55,96 +57,83 @@ export default function Settings() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionHeader}>Appearance</Text>
+  <Text style={styles.sectionHeader}>{t("appearance")}</Text>
         <View style={styles.section}>
           <SettingItem
             icon="moon"
-            title="Dark Mode"
-            description="Switch between light and dark theme"
+            title={t("darkMode")}
+            description={t("darkModeDesc")}
             rightComponent={<ToggleDarkMode />}
           />
         </View>
 
-        <Text style={styles.sectionHeader}>Language & Region</Text>
+  <Text style={styles.sectionHeader}>{t("languageRegion")}</Text>
         <View style={styles.section}>
           <SettingItem
             icon="globe"
-            title="Language"
-            description="Select your preferred language"
+            title={t("language")}
+            description={t("languageDesc")}
             rightComponent={<LanguageSelector />}
           />
-          <SettingItem
-            icon="time"
-            title="Timezone"
-            description="GMT+02:00"
-            rightComponent={
-              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-            }
-          />
+          {/* Timezone setting removed for simplicity */}
         </View>
 
-        <Text style={styles.sectionHeader}>Notifications</Text>
+  <Text style={styles.sectionHeader}>{t("notifications")}</Text>
         <View style={styles.section}>
           <SettingItem
             icon="notifications"
-            title="Push Notifications"
-            description="Receive push notifications"
+            title={t("pushNotifications")}
+            description={t("pushNotificationsDesc")}
             rightComponent={<Switch value={true} />}
           />
           <SettingItem
-            icon="mail"
-            title="Email Notifications"
-            description="Receive email notifications"
-            rightComponent={<Switch value={false} />}
-          />
-          <SettingItem
             icon="megaphone"
-            title="Promotional Updates"
-            description="Get promotional updates"
+            title={t("promotionalUpdates")}
+            description={t("promotionalUpdatesDesc")}
             rightComponent={<Switch value={true} />}
           />
         </View>
 
-        <Text style={styles.sectionHeader}>Support</Text>
+  <Text style={styles.sectionHeader}>{t("support")}</Text>
         <View style={styles.section}>
           <SettingItem
             icon="help-circle"
-            title="Help Center"
-            description="Get help and support"
+            title={t("helpCenter")}
+            description={t("helpCenterDesc")}
             rightComponent={
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             }
           />
           <SettingItem
             icon="document-text"
-            title="Terms of Service"
-            description="View terms of service"
+            title={t("termsOfService")}
+            description={t("termsOfServiceDesc")}
             rightComponent={
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             }
           />
           <SettingItem
             icon="lock-closed"
-            title="Privacy Policy"
-            description="View privacy policy"
+            title={t("privacyPolicy")}
+            description={t("privacyPolicyDesc")}
             rightComponent={
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             }
           />
         </View>
 
-        <Text style={styles.sectionHeader}>About</Text>
+  <Text style={styles.sectionHeader}>{t("about")}</Text>
         <View style={styles.section}>
           <SettingItem
             icon="information-circle"
-            title="App Version"
+            title={t("appVersion")}
             description="1.2.0"
             rightComponent={<></>}
           />
           <SettingItem
             icon="star"
-            title="Rate App"
-            description="Leave a rating for the app"
+            title={t("rateApp")}
+            description={t("rateAppDesc")}
             rightComponent={
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             }
@@ -157,7 +146,7 @@ export default function Settings() {
           disabled={isLoggingOut}
         >
           <Ionicons name="log-out" size={20} color="#ff3b30" />
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={styles.logoutText}>{t("signOut")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
