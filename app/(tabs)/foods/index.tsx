@@ -116,6 +116,7 @@ export default function Foods() {
             onPress={() => router.push(`/(tabs)/foods/${item.id}`)}
             onHeart={() => toggleFav(item)}
             isFav={favIds.includes(item.id)}
+            style={{ flex: 1, minWidth: 0 }}
           />
         )}
         ListEmptyComponent={
