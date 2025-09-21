@@ -1,7 +1,7 @@
-import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import { useTheme } from "../context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useTheme } from "../context/ThemeContext";
 import { Food } from "../types/food";
 
 export default function FoodCard({ item, onPress, onHeart, isFav }:{
@@ -23,6 +23,9 @@ export default function FoodCard({ item, onPress, onHeart, isFav }:{
         <Text style={{color: colors.textMuted, fontSize:12}} numberOfLines={1}>
           {item.region}
         </Text>
+        {/* <Text style={{color: colors.textMuted, fontSize:11, marginTop:2}} numberOfLines={1}>
+          Added by: {item.userName || 'Unknown'}
+        </Text> */}
       </View>
     </TouchableOpacity>
   );

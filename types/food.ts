@@ -8,5 +8,6 @@ export type Food = {
   description: string;
   restaurants: { name: string; address: string; lat: number; lng: number; }[];
   favouritesCount: number;
+  userName: string;           // Name of the user who added the food
   // tags: string[];
 };

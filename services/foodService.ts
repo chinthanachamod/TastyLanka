@@ -19,6 +19,7 @@ const foodsCol = collection(db, "foods");
  */
 export const addFood = async (food: Omit<Food, "id">): Promise<string> => {
   const { addDoc } = await import("firebase/firestore");
+  // userName is now required in food
   const docRef = await addDoc(foodsCol, food);
   return docRef.id;
 };

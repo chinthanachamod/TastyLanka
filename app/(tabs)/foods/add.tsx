@@ -13,11 +13,14 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useAuth } from '../../../context/AuthContext';
 import { useTheme } from '../../../context/ThemeContext';
 import { addFood } from '../../../services/foodService';
+import { getUserProfile } from '../../../services/userService';
 
 const AddFoodScreen = () => {
   const { colors } = useTheme();
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [region, setRegion] = useState('');
   const [description, setDescription] = useState('');
@@ -51,6 +54,16 @@ const AddFoodScreen = () => {
     
     setLoading(true);
     try {
+      let userName = 'Unknown';
+      if (user) {
+        // Try to get displayName from Firebase Auth first
+        userName = user.displayName || '';
+        if (!userName) {
+          // Fallback: fetch from user profile in Firestore
+          const profile = await getUserProfile(user.uid);
+          if (profile && profile.name) userName = profile.name;
+        }
+      }
       await addFood({
         name,
         region,
@@ -62,23 +75,23 @@ const AddFoodScreen = () => {
           lat: 0,
           lng: 0,
         })),
-  rating,
+        rating,
         favouritesCount: 0,
         categories,
+        userName,
         // tags: [],
       });
-      
       Alert.alert('Success', 'Food added successfully!');
       // Reset form
       setName('');
       setRegion('');
       setDescription('');
       setImageUrl('');
-  setRestaurants([{ name: '' }]);
-  setCategories([]);
-  setCategoryInput('');
-  setRating(0);
-  setRatingInput('');
+      setRestaurants([{ name: '' }]);
+      setCategories([]);
+      setCategoryInput('');
+      setRating(0);
+      setRatingInput('');
     } catch (error) {
       let message = 'Unknown error occurred';
       if (error instanceof Error) message = error.message;

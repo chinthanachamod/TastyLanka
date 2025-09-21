@@ -128,6 +128,26 @@ export default function FoodDetails() {
         <Text style={{ color: colors.textMuted, marginTop: 6 }}>
           {food.description}
         </Text>
+         {/*break a new line  */}
+        <View style={{ height: 15 }} />
+
+
+        {/* User Info */}
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 8 }}>
+          <Ionicons name="person-circle-outline" size={18} color={colors.textMuted} />
+          <Text
+            style={{
+              color: colors.textMuted,
+              marginLeft: 6,
+              fontStyle: "italic",
+              fontSize: 13,
+            }}
+          >
+            Food Added by :{" "}
+            <Text style={{ fontWeight: "600", color: colors.text }}>{food.userName || "Unknown"}</Text>
+          </Text>
+        </View>
+
 
         {/* Restaurants */}
         <Text style={{ color: colors.text, fontWeight: "700", marginTop: 14 }}>
