@@ -1,3 +1,11 @@
+/**
+ * Get all foods added by a specific user (by userName)
+ */
+export const getFoodsByUser = async (userName: string): Promise<Food[]> => {
+  const q = query(foodsCol, where("userName", "==", userName));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ ...(d.data() as Food), id: d.id }));
+};
 import { db } from "@/services/firebase";
 import { Food } from "@/types/food";
 import {

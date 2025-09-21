@@ -1,15 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import FoodCard from "../../components/FoodCard";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { logout } from "../../services/authService";
+import { getFoodsByUser } from "../../services/foodService";
 import { getUserProfile } from "../../services/userService";
 
 export default function Profile() {
@@ -17,11 +22,21 @@ export default function Profile() {
   const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [fullName, setFullName] = useState<string>("");
+  const [myFoods, setMyFoods] = useState<any[]>([]);
+  const [loadingFoods, setLoadingFoods] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (user?.uid) {
       getUserProfile(user.uid).then((profile) => {
         setFullName(profile?.fullName || "");
+        if (profile?.fullName) {
+          setLoadingFoods(true);
+          getFoodsByUser(profile.fullName).then((foods) => {
+            setMyFoods(foods);
+            setLoadingFoods(false);
+          });
+        }
       });
     }
   }, [user?.uid]);
@@ -46,7 +61,7 @@ export default function Profile() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg }]}>
+    <View style={[styles.container, { backgroundColor: colors.bg }]}>...
       <View style={styles.header}>
         <LinearGradient
           colors={["#FFB347", "#FF8000"]}
@@ -61,6 +76,33 @@ export default function Profile() {
         <Text style={[styles.email, { color: colors.text + "99" }]}>
           {user?.email}
         </Text>
+      </View>
+
+      {/* My Foods List */}
+      <View style={{ width: "100%", marginTop: 24 }}>
+        <Text style={{ color: colors.text, fontWeight: "700", fontSize: 18, marginBottom: 10 }}>
+          My Foods
+        </Text>
+        {loadingFoods ? (
+          <ActivityIndicator color={colors.accent} />
+        ) : myFoods.length === 0 ? (
+          <Text style={{ color: colors.textMuted, fontStyle: "italic" }}>No foods added yet.</Text>
+        ) : (
+          <FlatList
+            data={myFoods}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <FoodCard
+                item={item}
+                onPress={() => router.push(`/(tabs)/foods/${item.id}`)}
+                onHeart={() => {}}
+                isFav={false}
+              />
+            )}
+            contentContainerStyle={{ gap: 12 }}
+            style={{ width: "100%" }}
+          />
+        )}
       </View>
 
       <TouchableOpacity
