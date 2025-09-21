@@ -5,8 +5,11 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -15,24 +18,36 @@ import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { logout } from "../../services/authService";
 import { getFoodsByUser } from "../../services/foodService";
-import { getUserProfile } from "../../services/userService";
+import { getUserProfile, updateUserProfile } from "../../services/userService";
+
+type ProfileInfo = {
+  fullName?: string;
+  dateOfBirth?: string;
+  country?: string;
+  phoneNumber?: string;
+  email?: string;
+};
 
 export default function Profile() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [fullName, setFullName] = useState<string>("");
+  const [profile, setProfile] = useState<ProfileInfo>({});
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editProfile, setEditProfile] = useState<ProfileInfo>({});
+  const [savingProfile, setSavingProfile] = useState(false);
   const [myFoods, setMyFoods] = useState<any[]>([]);
   const [loadingFoods, setLoadingFoods] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     if (user?.uid) {
-      getUserProfile(user.uid).then((profile) => {
-        setFullName(profile?.fullName || "");
-        if (profile?.fullName) {
+      getUserProfile(user.uid).then((profileData) => {
+        setProfile(profileData || {});
+        setEditProfile(profileData || {});
+        if (profileData?.fullName) {
           setLoadingFoods(true);
-          getFoodsByUser(profile.fullName).then((foods) => {
+          getFoodsByUser(profileData.fullName).then((foods) => {
             setMyFoods(foods);
             setLoadingFoods(false);
           });
@@ -61,7 +76,7 @@ export default function Profile() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.bg }]}>...
+    <ScrollView style={{ flex: 1, backgroundColor: colors.bg }} contentContainerStyle={{ alignItems: "center", padding: 20 }}>
       <View style={styles.header}>
         <LinearGradient
           colors={["#FFB347", "#FF8000"]}
@@ -71,39 +86,48 @@ export default function Profile() {
         </LinearGradient>
 
         <Text style={[styles.name, { color: colors.text }]}> 
-          {fullName || user?.displayName || "User"}
+          {profile.fullName || user?.displayName || "User"}
         </Text>
-        <Text style={[styles.email, { color: colors.text + "99" }]}>
+        <Text style={[styles.email, { color: colors.text + "99" }]}> 
           {user?.email}
         </Text>
+        {profile.dateOfBirth && (
+          <Text style={[styles.info, { color: colors.text }]}>DOB: {profile.dateOfBirth}</Text>
+        )}
+        {profile.country && (
+          <Text style={[styles.info, { color: colors.text }]}>Country: {profile.country}</Text>
+        )}
+        {profile.phoneNumber && (
+          <Text style={[styles.info, { color: colors.text }]}>Phone: {profile.phoneNumber}</Text>
+        )}
+        <TouchableOpacity style={styles.editButton} onPress={() => setEditModalVisible(true)}>
+          <Ionicons name="create-outline" size={18} color={colors.accent} />
+          <Text style={{ color: colors.accent, marginLeft: 6 }}>Edit Profile</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* My Foods List */}
-      <View style={{ width: "100%", marginTop: 24 }}>
-        <Text style={{ color: colors.text, fontWeight: "700", fontSize: 18, marginBottom: 10 }}>
-          My Foods
-        </Text>
-        {loadingFoods ? (
-          <ActivityIndicator color={colors.accent} />
-        ) : myFoods.length === 0 ? (
-          <Text style={{ color: colors.textMuted, fontStyle: "italic" }}>No foods added yet.</Text>
-        ) : (
-          <FlatList
-            data={myFoods}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <FoodCard
-                item={item}
-                onPress={() => router.push(`/(tabs)/foods/${item.id}`)}
-                onHeart={() => {}}
-                isFav={false}
-              />
-            )}
-            contentContainerStyle={{ gap: 12 }}
-            style={{ width: "100%" }}
-          />
-        )}
-      </View>
+      <Text style={{ fontSize: 18, fontWeight: "700", color: colors.text, marginBottom: 8, alignSelf: "flex-start" }}>My Foods</Text>
+      {loadingFoods ? (
+        <ActivityIndicator color={colors.accent} />
+      ) : (
+        <FlatList
+          data={myFoods}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <FoodCard
+              item={item}
+              onPress={() => router.push(`/foods/${item.id}`)}
+              onHeart={() => {}}
+              isFav={false}
+            />
+          )}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={{ width: "100%", marginBottom: 24 }}
+          contentContainerStyle={{ gap: 12 }}
+          ListEmptyComponent={<Text style={{ color: colors.textMuted }}>No foods added yet.</Text>}
+        />
+      )}
 
       <TouchableOpacity
         style={styles.logoutButton}
@@ -120,7 +144,75 @@ export default function Profile() {
           </Text>
         </LinearGradient>
       </TouchableOpacity>
-    </View>
+
+      {/* Edit Profile Modal */}
+      <Modal
+        visible={editModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}> 
+            <Text style={{ fontSize: 20, fontWeight: "700", marginBottom: 16, color: colors.text }}>Edit Profile</Text>
+            <TextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.accent }]}
+              placeholder="Full Name"
+              placeholderTextColor={colors.textMuted}
+              value={editProfile.fullName || ""}
+              onChangeText={(t) => setEditProfile((p) => ({ ...p, fullName: t }))}
+            />
+            <TextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.accent }]}
+              placeholder="Date of Birth (YYYY-MM-DD)"
+              placeholderTextColor={colors.textMuted}
+              value={editProfile.dateOfBirth || ""}
+              onChangeText={(t) => setEditProfile((p) => ({ ...p, dateOfBirth: t }))}
+            />
+            <TextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.accent }]}
+              placeholder="Country"
+              placeholderTextColor={colors.textMuted}
+              value={editProfile.country || ""}
+              onChangeText={(t) => setEditProfile((p) => ({ ...p, country: t }))}
+            />
+            <TextInput
+              style={[styles.input, { color: colors.text, borderColor: colors.accent }]}
+              placeholder="Phone Number"
+              placeholderTextColor={colors.textMuted}
+              value={editProfile.phoneNumber || ""}
+              onChangeText={(t) => setEditProfile((p) => ({ ...p, phoneNumber: t }))}
+              keyboardType="phone-pad"
+            />
+            <View style={{ flexDirection: "row", justifyContent: "flex-end", marginTop: 16, gap: 12 }}>
+              <TouchableOpacity onPress={() => setEditModalVisible(false)} style={[styles.modalButton, { backgroundColor: colors.bg }]}>
+                <Text style={{ color: colors.text }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  setSavingProfile(true);
+                  try {
+                    if (user?.uid) {
+                      await updateUserProfile(user.uid, editProfile);
+                      setProfile(editProfile);
+                      setEditModalVisible(false);
+                    }
+                  } catch (e) {
+                    alert("Failed to update profile");
+                  } finally {
+                    setSavingProfile(false);
+                  }
+                }}
+                style={[styles.modalButton, { backgroundColor: colors.accent }]}
+                disabled={savingProfile}
+              >
+                <Text style={{ color: "#fff" }}>{savingProfile ? "Saving..." : "Save"}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 }
 
@@ -143,7 +235,13 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 40, fontWeight: "800", color: "#fff" },
   name: { fontSize: 24, fontWeight: "700", marginBottom: 4 },
   email: { fontSize: 16 },
-  logoutButton: { width: "100%", borderRadius: 14, overflow: "hidden" },
+  logoutButton: { width: "100%", borderRadius: 14, overflow: "hidden", marginTop: 24 },
+  info: { fontSize: 14, marginTop: 2 },
+  editButton: { flexDirection: "row", alignItems: "center", marginTop: 10, alignSelf: "center" },
+  input: { borderWidth: 1, borderRadius: 8, padding: 10, marginBottom: 10, fontSize: 16 },
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.3)", justifyContent: "center", alignItems: "center" },
+  modalContent: { width: 320, borderRadius: 16, padding: 20 },
+  modalButton: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
   logoutGradient: {
     flexDirection: "row",
     alignItems: "center",
