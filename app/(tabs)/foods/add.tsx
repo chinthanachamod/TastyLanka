@@ -77,6 +77,7 @@ const AddFoodScreen = () => {
         favouritesCount: 0,
         categories,
         userName,
+        userId: user?.uid || '',
         // tags: [],
       });
       Alert.alert('Success', 'Food added successfully!');
