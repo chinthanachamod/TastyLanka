@@ -138,6 +138,15 @@ export default function Settings() {
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             }
           />
+          {/* About App */}
+          <SettingItem
+            icon="apps"
+            title={t("About App")}
+            description={t("Details about this app")}
+            rightComponent={
+              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+            }
+          />
         </View>
 
         <TouchableOpacity 
