@@ -30,7 +30,7 @@ const AddFoodScreen = () => {
   const [ratingInput, setRatingInput] = useState('');
   
   const categorySuggestions = [
-    'Dessert', 'Main Course', 'Streetfood', 'Appetizer', 'Beverage', 
+    'Dessert', 'Main Course', "Curry", 'Streetfood', 'Appetizer', 'Beverage', 
     'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Vegan', 'Side Dish',
     'Vegetarian', 'Seafood', 'Traditional', 'Spicy', 'Sweet'
   ];
@@ -236,6 +236,7 @@ const AddFoodScreen = () => {
         contentContainerStyle={styles.container} 
         keyboardShouldPersistTaps="handled"
       >
+        <Text></Text>
         <Text style={styles.header}>Add New Food</Text>
         
         <Text style={styles.label}>Food Name *</Text>
