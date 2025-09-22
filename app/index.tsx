@@ -1,25 +1,31 @@
+import { SplashLoader } from '@/components/SplashLoader'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from 'expo-router/build/exports'
-import React, { useEffect } from 'react'
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
 
 const Index = () => {
     const router = useRouter()
     const { user, loading } = useAuth()
+    const [showSplash, setShowSplash] = useState(true)
     console.log("User data:", user)
 
     useEffect(() => {
         if (!loading) {
-            if (user) router.replace('/home')
+            // Add a small delay to ensure splash screen shows the logo
+            setTimeout(() => {
+                setShowSplash(false)
+                if (user) router.replace('/home')
                 else router.replace('/login')
+            }, 1500) // Show splash for at least 1.5 seconds
         }
     }, [user, loading])
 
-    if(loading){
+    if(loading || showSplash){
         return (
-        <View className='flex-1 justify-center items-center'>
-            <ActivityIndicator size="large" />
-        </View>
+            <View style={{ flex: 1 }}>
+                <SplashLoader isVisible={true} />
+            </View>
         )
     }
 
