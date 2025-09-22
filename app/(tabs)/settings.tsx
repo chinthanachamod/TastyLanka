@@ -1,5 +1,6 @@
 import { logout } from "@/services/authService";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import {
   ScrollView,
@@ -130,14 +131,19 @@ export default function Settings() {
             description="1.2.0"
             rightComponent={<></>}
           />
-          <SettingItem
-            icon="star"
-            title={t("rateApp")}
-            description={t("rateAppDesc")}
-            rightComponent={
-              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-            }
-          />
+          <TouchableOpacity
+            onPress={() => router.push('/ratings' as any)}
+            style={{ flex: 1 }}
+          >
+            <SettingItem
+              icon="star"
+              title={t("rateApp")}
+              description={t("rateAppDesc")}
+              rightComponent={
+                <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+              }
+            />
+          </TouchableOpacity>
           {/* About App */}
           <SettingItem
             icon="apps"
