@@ -42,7 +42,10 @@ export default function Profile() {
 
   useEffect(() => {
     if (user?.uid) {
+      console.log('Fetching profile for user:', user.uid);
       getUserProfile(user.uid).then((profileData) => {
+        console.log('Profile data received:', profileData);
+        console.log('Full name from profile:', profileData?.fullName);
         setProfile(profileData || {});
         setEditProfile(profileData || {});
         if (profileData?.fullName) {
@@ -52,6 +55,8 @@ export default function Profile() {
             setLoadingFoods(false);
           });
         }
+      }).catch((error) => {
+        console.error('Error fetching profile:', error);
       });
     }
   }, [user?.uid]);
@@ -194,7 +199,10 @@ export default function Profile() {
                   try {
                     if (user?.uid) {
                       await updateUserProfile(user.uid, editProfile);
-                      setProfile(editProfile);
+                      // Refetch the latest profile from Firestore
+                      const updatedProfile = await getUserProfile(user.uid);
+                      setProfile(updatedProfile || {});
+                      setEditProfile(updatedProfile || {});
                       setEditModalVisible(false);
                     }
                   } catch (e) {
