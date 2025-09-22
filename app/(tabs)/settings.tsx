@@ -128,7 +128,7 @@ export default function Settings() {
           <SettingItem
             icon="information-circle"
             title={t("appVersion")}
-            description="1.2.0"
+            description="1.0.0"
             rightComponent={<></>}
           />
           <TouchableOpacity

@@ -131,7 +131,7 @@ export default function AboutIndex() {
           <InfoCard
             icon="mail"
             title="Get in Touch"
-            description="chinthanachamod@gmail.com"
+            description="chinthanachamod50@gmail.com"
             onPress={handleEmail}
           />
           <InfoCard

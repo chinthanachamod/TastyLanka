@@ -3,14 +3,13 @@ import React from 'react'
 
 const AuthLayout = () => {
   return (
-    <Stack>
-        <Stack
-            screenOptions={{
-            title: "TastyLanka",
-            headerShown: false,
-            animation: "slide_from_right",
-            }}
-      />
+    <Stack
+      screenOptions={{
+        title: "TastyLanka",
+        headerShown: false,
+        animation: "slide_from_right",
+      }}
+    >
       <Stack.Screen name="login" options={{title: "Login", headerShown: false}} />
       <Stack.Screen name="register" options={{title: "Register", headerShown: false}} />
     </Stack>
