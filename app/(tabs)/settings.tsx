@@ -145,14 +145,19 @@ export default function Settings() {
             />
           </TouchableOpacity>
           {/* About App */}
-          <SettingItem
-            icon="apps"
-            title={t("About App")}
-            description={t("Details about this app")}
-            rightComponent={
-              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-            }
-          />
+          <TouchableOpacity
+            onPress={() => router.push('/about' as any)}
+            style={{ flex: 1 }}
+          >
+            <SettingItem
+              icon="apps"
+              title={t("About App and The Developer")}
+              description={t("Details about this app")}
+              rightComponent={
+                <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+              }
+            />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity 
