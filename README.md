@@ -79,86 +79,6 @@ TastyLanka is a comprehensive mobile application for discovering, exploring, and
 - **Prettier** - Code formatting
 - **TypeScript** - Static type checking
 
-## 📁 Project Structure
-
-```
-TastyLanka/
-├── app/                          # Expo Router file-based routing
-│   ├── _layout.tsx              # Root layout
-│   ├── index.tsx                # App entry point
-│   ├── (auth)/                  # Authentication screens
-│   │   ├── login.tsx            # Login screen
-│   │   └── register.tsx         # Registration screen
-│   ├── (tabs)/                  # Main app tabs
-│   │   ├── home.tsx             # Home screen
-│   │   ├── favourites.tsx       # Favorites screen
-│   │   ├── profile.tsx          # User profile
-│   │   ├── settings.tsx         # App settings
-│   │   └── foods/               # Food-related screens
-│   │       ├── index.tsx        # Foods list
-│   │       ├── [id].tsx         # Food details
-│   │       └── add.tsx          # Add new food
-│   ├── about/                   # About screen
-│   └── ratings/                 # Rating management
-├── components/                   # Reusable UI components
-│   ├── FoodCard.tsx             # Food display card
-│   ├── RatingCard.tsx           # Rating display
-│   ├── RatingForm.tsx           # Rating input form
-│   ├── LanguageSelector.tsx     # Language switcher
-│   ├── ToggleDarkMode.tsx       # Theme switcher
-│   └── Loader.tsx               # Loading component
-├── context/                     # React Context providers
-│   ├── AuthContext.tsx          # Authentication state
-│   ├── ThemeContext.tsx         # Theme management
-│   └── I18nContext.tsx          # Internationalization
-├── services/                    # API and Firebase services
-│   ├── firebase.ts              # Firebase configuration
-│   ├── authService.ts           # Authentication methods
-│   ├── foodService.ts           # Food data operations
-│   ├── ratingsService.ts        # Rating operations
-│   ├── favouritesService.ts     # Favorites management
-│   ├── userService.ts           # User profile operations
-│   └── foodEditService.ts       # Food editing operations
-├── types/                       # TypeScript type definitions
-│   ├── food.ts                  # Food model
-│   └── rating.ts                # Rating model
-└── assets/                      # Static assets
-    ├── images/                  # App images and icons
-    ├── fonts/                   # Custom fonts
-    └── videos/                  # Video assets
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- **Node.js** (v16 or higher)
-- **npm** or **yarn**
-- **Expo CLI** (`npm install -g @expo/cli`)
-- **Android Studio** (for Android development)
-- **Xcode** (for iOS development - macOS only)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/chinthanachamod/TastyLanka.git
-   cd TastyLanka
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure Firebase**
-   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Enable Authentication, Firestore Database, and Storage
-   - Update `services/firebase.ts` with your Firebase configuration
-
-4. **Start the development server**
-   ```bash
-   npx expo start
-   ```
 
 ### Development Options
 
@@ -198,26 +118,6 @@ npm run reset-project
    - `users` - User profiles
    - `favourites` - User favorite foods
 
-2. Security Rules for Firestore:
-   ```javascript
-   // Allow authenticated users to read/write their own data
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /{document=**} {
-         allow read, write: if request.auth != null;
-       }
-     }
-   }
-   ```
-
-### Environment Variables
-Create a `.env` file in the root directory:
-```env
-EXPO_PUBLIC_FIREBASE_API_KEY=your_api_key
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_auth_domain
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-```
 
 ## 📱 App Features in Detail
 
@@ -267,6 +167,7 @@ EXPO_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 The app supports multiple languages:
 - **English** (default)
 - **Sinhala** (සිංහල)
+- **Tamil** (தமிழ்)
 
 Language files are located in the `i18n` directory and managed through React i18next.
 

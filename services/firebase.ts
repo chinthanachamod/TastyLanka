@@ -5,13 +5,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBrN_jzK32PjesXFvi8pRYw6L49-7DFYps",
-  authDomain: "tastylanka-e9de3.firebaseapp.com",
-  projectId: "tastylanka-e9de3",
-  storageBucket: "tastylanka-e9de3.firebasestorage.app",
-  messagingSenderId: "261282321718",
-  appId: "1:261282321718:web:73ed2fa96c1538cce90f97",
-  measurementId: "G-PQRCSMD0SP"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "your-app.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-app.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID" // optional
 };
 
 const app = initializeApp(firebaseConfig);
