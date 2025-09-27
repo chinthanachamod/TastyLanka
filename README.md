@@ -167,26 +167,6 @@ Language files are located in the `i18n` directory and managed through React i18
 - [ ] Offline behavior
 - [ ] Error handling
 
-
-## 🤝 Contributing
-
-### Commit Convention
-We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation updates
-- `style:` - Code style changes
-- `refactor:` - Code refactoring
-- `test:` - Adding or updating tests
-- `chore:` - Maintenance tasks
-
-### Code Style Guidelines
-- Use TypeScript for type safety
-- Follow ESLint and Prettier configurations
-- Write meaningful variable and function names
-- Add comments for complex logic
-- Keep components small and focused
-
 ## 📈 Performance Considerations
 
 - **Image Optimization**: Uses Expo Image for optimized image loading
